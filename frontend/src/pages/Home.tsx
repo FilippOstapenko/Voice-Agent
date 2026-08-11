@@ -25,16 +25,16 @@ export default function Home() {
         </nav>
       </header>
 
-      <section className="mx-auto max-w-3xl px-6 pb-20 pt-24 text-center">
+      <section className="mx-auto max-w-3xl px-6 pb-16 pt-16 text-center sm:pb-20 sm:pt-24">
         <Badge variant="secondary" className="mb-6">Nooit meer een gemiste oproep</Badge>
-        <h1 className="text-balance text-5xl font-semibold leading-[1.1] tracking-tight">
+        <h1 className="text-balance text-4xl sm:text-5xl font-semibold leading-[1.1] tracking-tight">
           Jouw AI-receptionist, dag en nacht bereikbaar
         </h1>
         <p className="mx-auto mt-5 max-w-xl text-pretty text-lg text-muted-foreground">
           Beantwoordt je telefoon, WhatsApp en websitechat. Plant afspraken, beantwoordt vragen
           en zet elke conversatie automatisch in je CRM.
         </p>
-        <div className="mt-9 flex items-center justify-center gap-3">
+        <div className="mt-9 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
           <Button size="lg">
             <Phone className="h-4 w-4" /> Laat de AI mij bellen
           </Button>
