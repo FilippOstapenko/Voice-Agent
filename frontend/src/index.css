@@ -3,7 +3,7 @@
 :root {
   --background: hsl(0 0% 100%);
   --foreground: hsl(0 0% 9%);
-  --primary: hsl(0 0% 9%);
+  --primary: hsl(163 65% 22%);
   --primary-foreground: hsl(0 0% 98%);
   --secondary: hsl(0 0% 96%);
   --secondary-foreground: hsl(0 0% 9%);
@@ -12,7 +12,7 @@
   --accent: hsl(0 0% 96%);
   --accent-foreground: hsl(0 0% 9%);
   --border: hsl(0 0% 90%);
-  --ring: hsl(0 0% 63%);
+  --ring: hsl(163 40% 45%);
   --radius: 0.5rem;
 }
 
