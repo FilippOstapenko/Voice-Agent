@@ -5,11 +5,15 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "seed": "tsx prisma/seed.ts",
+    "db:push": "prisma db push"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
-    "fastify": "^5.2.0"
+    "fastify": "^5.2.0",
+    "@prisma/client": "^6.2.0",
+    "@fastify/cors": "^10.0.0"
   },
   "devDependencies": {
     "@types/node": "^26.2.0",

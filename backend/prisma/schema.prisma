@@ -7,5 +7,92 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Models arrive in Phase 2b: Organization, Agent, Conversation,
-// Message, Channel, Subscription, Usage.
+enum ChannelType {
+  PHONE
+  WHATSAPP
+  CHAT
+  VOICE
+}
+
+enum PlanType {
+  START
+  COMPLEET
+  PRO
+}
+
+enum MessageRole {
+  CALLER
+  AI
+}
+
+model Organization {
+  id            String         @id @default(cuid())
+  name          String
+  website       String?
+  createdAt     DateTime       @default(now())
+  agent         Agent?
+  conversations Conversation[]
+  subscription  Subscription?
+  usages        Usage[]
+}
+
+model Agent {
+  id             String       @id @default(cuid())
+  organizationId String       @unique
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  prompt         String       @default("")
+  knowledge      String       @default("")
+  updatedAt      DateTime     @updatedAt
+}
+
+model Conversation {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  channel        ChannelType
+  contact        String
+  summary        String       @default("")
+  createdAt      DateTime     @default(now())
+  messages       Message[]
+  actions        CrmAction[]
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           MessageRole
+  text           String
+  createdAt      DateTime     @default(now())
+}
+
+model CrmAction {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  type           String
+  detail         String
+  createdAt      DateTime     @default(now())
+}
+
+model Subscription {
+  id               String       @id @default(cuid())
+  organizationId   String       @unique
+  organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  plan             PlanType
+  status           String       @default("active")
+  pricePerMonth    Int
+  currentPeriodEnd DateTime?
+}
+
+model Usage {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  channel        ChannelType
+  month          String
+  used           Int          @default(0)
+  quota          Int
+
+  @@unique([organizationId, channel, month])
+}

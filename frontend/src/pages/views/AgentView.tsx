@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -5,6 +7,49 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 export default function AgentView() {
+  const [website, setWebsite] = useState("");
+  const [prompt, setPrompt] = useState("");
+  const [knowledge, setKnowledge] = useState("");
+  const [busy, setBusy] = useState<"generate" | "save" | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+
+  useEffect(() => {
+    Promise.all([api.organization(), api.agent()])
+      .then(([org, agent]) => {
+        setWebsite(org.website ?? "");
+        setPrompt(agent.prompt);
+        setKnowledge(agent.knowledge);
+      })
+      .catch(() => setNotice("Kan instellingen niet laden. Draait de backend?"));
+  }, []);
+
+  async function generate() {
+    setBusy("generate");
+    setNotice(null);
+    try {
+      const agent = await api.generateKnowledge(website);
+      setKnowledge(agent.knowledge);
+      setNotice("Kennisbasis bijgewerkt.");
+    } catch {
+      setNotice("Genereren mislukt.");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function save() {
+    setBusy("save");
+    setNotice(null);
+    try {
+      await api.saveAgent({ prompt, knowledge });
+      setNotice("Opgeslagen.");
+    } catch {
+      setNotice("Opslaan mislukt.");
+    } finally {
+      setBusy(null);
+    }
+  }
+
   return (
     <div className="max-w-2xl">
       <h1 className="text-xl font-semibold tracking-tight">Assistent</h1>
@@ -22,10 +67,26 @@ export default function AgentView() {
         <CardContent className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
             <Label htmlFor="site">Website</Label>
-            <div className="flex gap-2">
-              <Input id="site" placeholder="https://jouwbedrijf.nl" />
-              <Button>Genereer kennis</Button>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <Input
+                id="site"
+                placeholder="https://jouwbedrijf.nl"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+              />
+              <Button onClick={generate} disabled={busy !== null || !website}>
+                {busy === "generate" ? "Bezig…" : "Genereer kennis"}
+              </Button>
             </div>
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="knowledge">Kennisbasis</Label>
+            <Textarea
+              id="knowledge"
+              rows={4}
+              value={knowledge}
+              onChange={(e) => setKnowledge(e.target.value)}
+            />
           </div>
         </CardContent>
       </Card>
@@ -38,14 +99,13 @@ export default function AgentView() {
         <CardContent className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
             <Label htmlFor="prompt">Prompt</Label>
-            <Textarea
-              id="prompt"
-              rows={6}
-              defaultValue="Je bent de vriendelijke receptionist van Van Dijk Installaties. Beantwoord vragen kort en duidelijk. Plan afspraken alleen op werkdagen. Verbind door naar een medewerker bij klachten."
-            />
+            <Textarea id="prompt" rows={6} value={prompt} onChange={(e) => setPrompt(e.target.value)} />
           </div>
-          <div>
-            <Button>Opslaan</Button>
+          <div className="flex items-center gap-3">
+            <Button onClick={save} disabled={busy !== null}>
+              {busy === "save" ? "Bezig…" : "Opslaan"}
+            </Button>
+            {notice && <span className="text-sm text-muted-foreground">{notice}</span>}
           </div>
         </CardContent>
       </Card>

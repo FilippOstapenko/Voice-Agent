@@ -30,9 +30,14 @@ Design reference for the public website: https://www.voicelabs.nl/ — clean, mi
 - Secrets only in `.env` (never committed); `.env.example` documents required vars.
 - Dutch and English must both be supported in AI prompts and UI copy (i18n later, keep copy centralized).
 
+## Status
+Done: foundation, UI shells (2a), real backend + Prisma + API + seeded demo data (2b).
+Next: chat channel (2c). DB uses `prisma db push` for now; switch to real migrations before production.
+Single-tenant stub: all API routes use org "org_demo" until auth lands.
+
 ## Build order (do not reorder — each step reuses the previous)
-1. UI shells with mock data (validate design against Voicelabs before logic)
-2. Real backend + Prisma models replace mocks
+1. UI shells with mock data (validate design against Voicelabs before logic) — DONE
+2. Real backend + Prisma models replace mocks — DONE
 3. Chat first (simplest AI pipeline: message → OpenAI → inbox)
 4. Web voice (adds audio, no telephony)
 5. Phone last (Twilio bridge — hardest part, everything around it already works)
