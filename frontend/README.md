@@ -95,13 +95,25 @@ Phase 2c adds exactly one capability to the frontend: a working chat. Deliberate
   on the same `conversationId` kept the history, and the conversation appeared in
   `/api/conversations` with an AI-written summary. See `backend/README.md`.
 
-**Not verified — the significant gap.** The frontend was **not** typechecked and **not**
-opened in a browser this session: `node_modules` is only inside the container, and
-`docker compose exec` is blocked in this environment, so neither `tsc` nor a browser run
-was possible. **`ChatPanel` has never rendered.** Every claim above is about the API it
-calls, not about the component. Vite typechecks on save, so a mistake will surface as an
-overlay in the browser rather than silently — but the first person to open :5173 is doing
-the real test.
+Driven in Chrome against the live stack:
+
+- `/` renders; "Chat met de agent" opens the panel with the greeting and a focused input.
+- Typing *"Wat kost een onderhoudsbeurt voor een cv-ketel?"* + Enter returned
+  *"Een onderhoudsbeurt voor een cv-ketel kost €119 incl. btw en duurt ongeveer 45 minuten."*
+- `/app` → Inbox: the conversation appears top of the list with a `Chat` badge, its
+  two-line transcript and the AI-written summary.
+- Browser console: no errors or warnings.
+
+**Not verified.** `tsc` was never run against this app — `node_modules` lives only inside
+the container and `docker compose exec` is blocked here, so type errors would only surface
+as a Vite overlay. Untested: the mobile full-screen layout (only a desktop viewport was
+used), the error branch when the backend is down, and multi-turn chat *through the UI*
+(the follow-up turn was verified over the API, not the panel).
+
+**A wedged Vite blocks all of this.** The dev server accepted TCP but never answered HTTP,
+and had stopped logging HMR updates for changed files. `docker compose restart frontend`
+fixed it. If the page hangs and `curl -m 5 localhost:5173` times out, restart before
+debugging anything in the code.
 
 ## Next in this directory
 

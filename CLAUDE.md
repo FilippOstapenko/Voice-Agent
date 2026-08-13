@@ -34,8 +34,8 @@ Design reference for the public website: https://www.voicelabs.nl/ — clean, mi
 Done: foundation, UI shells (2a), real backend + Prisma + API + seeded demo data (2b).
 Chat channel (2c) works end to end: `POST /api/chat` answers from the org's own knowledge
 (verified via curl — €119 tariff), keeps conversation history, writes an AI summary and
-counts usage. The homepage chat panel is wired to it but has not been opened in a browser yet.
-Next: web voice (4).
+counts usage. Verified in the browser too: homepage chat panel → €119 answer → conversation
+in the dashboard inbox with transcript and summary. Next: web voice (4).
 Editing backend/.env needs `docker compose restart backend` — dotenv reads it only at boot.
 DB uses `prisma db push` for now; switch to real migrations before production.
 Single-tenant stub: all API routes use org "org_demo" until auth lands.
