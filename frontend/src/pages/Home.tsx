@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Phone, MessageCircle, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import ChatPanel from "@/components/ChatPanel";
 
 const plans = [
   { name: "Start", price: "€99", blurb: "Chat op je website + inbox", highlight: false },
@@ -11,6 +13,8 @@ const plans = [
 ];
 
 export default function Home() {
+  const [chatOpen, setChatOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-background">
       <header className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5">
@@ -38,7 +42,7 @@ export default function Home() {
           <Button size="lg">
             <Phone className="h-4 w-4" /> Laat de AI mij bellen
           </Button>
-          <Button size="lg" variant="outline">
+          <Button size="lg" variant="outline" onClick={() => setChatOpen(true)}>
             <MessageCircle className="h-4 w-4" /> Chat met de agent
           </Button>
         </div>
@@ -73,6 +77,8 @@ export default function Home() {
       <footer className="border-t border-border py-8 text-center text-xs text-muted-foreground">
         © 2026 Optivaize — AI Voice Agent Platform
       </footer>
+
+      {chatOpen && <ChatPanel onClose={() => setChatOpen(false)} />}
     </div>
   );
 }

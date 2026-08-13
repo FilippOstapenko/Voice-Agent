@@ -30,6 +30,11 @@ export interface BillingData {
   usage: { label: string; used: number; quota: number }[];
 }
 
+export interface ChatReply {
+  conversationId: string;
+  reply: string;
+}
+
 export interface OrganizationData {
   id: string;
   name: string;
@@ -41,7 +46,12 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     headers: { "Content-Type": "application/json" },
     ...init,
   });
-  if (!res.ok) throw new Error(`API ${res.status} op ${path}`);
+  if (!res.ok) {
+    // The backend sends a human-readable Dutch `error` field — show that when present,
+    // so the chat panel can say "de AI is even niet bereikbaar" instead of "API 502".
+    const body = await res.json().catch(() => null);
+    throw new Error(body?.error ?? `API ${res.status} op ${path}`);
+  }
   return res.json() as Promise<T>;
 }
 
@@ -58,6 +68,11 @@ export const api = {
       body: JSON.stringify({ website }),
     }),
   billing: () => request<BillingData>("/api/billing"),
+  chat: (message: string, conversationId?: string) =>
+    request<ChatReply>("/api/chat", {
+      method: "POST",
+      body: JSON.stringify({ message, conversationId }),
+    }),
 };
 
 export function formatTime(iso: string): string {

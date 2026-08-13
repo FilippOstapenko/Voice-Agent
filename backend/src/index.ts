@@ -5,6 +5,7 @@ import organizationRoutes from "./routes/organization.js";
 import agentRoutes from "./routes/agent.js";
 import conversationRoutes from "./routes/conversations.js";
 import billingRoutes from "./routes/billing.js";
+import chatRoutes from "./routes/chat.js";
 
 const app = Fastify({ logger: true });
 
@@ -16,6 +17,7 @@ await app.register(organizationRoutes);
 await app.register(agentRoutes);
 await app.register(conversationRoutes);
 await app.register(billingRoutes);
+await app.register(chatRoutes);
 
 const port = Number(process.env.PORT ?? 3000);
 app
